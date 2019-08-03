@@ -8,6 +8,6 @@ public class ButtonIT {
 
     @Test
     public void buttonCanBeClicked() {
-
+        System.out.println("Running integration tests");
     }
 }

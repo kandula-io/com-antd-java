@@ -5,3 +5,5 @@ COM-AntD-Java.iml
 
 **/node
 **/node_modules
+
+**/.DS_Store
