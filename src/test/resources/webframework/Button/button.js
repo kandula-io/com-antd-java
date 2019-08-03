@@ -3,8 +3,19 @@
 const { Button } = antd;
 
 class App extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.state = { clicked: false };
+    }
+
     render() {
-        return (<p><Button id="my-button" type="primary">Primary</Button></p>);
+
+        if (this.state.clicked) {
+            return <p><div id="result">Clicked</div></p>
+        }
+
+        return (<p><Button className="at__my_button" onClick={() => this.setState({ clicked : true })} type="primary">Primary</Button></p>);
     }
 }
 

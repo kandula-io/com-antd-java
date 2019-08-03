@@ -14,11 +14,9 @@
 
         <!-- Test Only -->
         <junit.version>4.12</junit.version>
-        <frontend-maven-plugin.version>1.7.6</frontend-maven-plugin.version>
-        <frontend-maven-plugin.nodeVersion>v10.16.1</frontend-maven-plugin.nodeVersion>
-        <frontend-maven-plugin.npmVersion>6.4.1</frontend-maven-plugin.npmVersion>
-        <frontend-maven-plugin.yarnVersion>v0.16.1</frontend-maven-plugin.yarnVersion>
-        <cargo-maven2-plugin.version>1.4.8</cargo-maven2-plugin.version>
+        <nanohttpd-webserver.version>2.3.1</nanohttpd-webserver.version>
+        <selenide.version>5.2.7</selenide.version>
+
     </properties>
 
     <dependencies>
@@ -35,6 +33,20 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.nanohttpd</groupId>
+            <artifactId>nanohttpd-webserver</artifactId>
+            <version>${nanohttpd-webserver.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.codeborne</groupId>
+            <artifactId>selenide</artifactId>
+            <version>${selenide.version}</version>
             <scope>test</scope>
         </dependency>
 
