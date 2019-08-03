@@ -19,14 +19,12 @@ jobs:
       - run: mvn verify
       - run: mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec >> ~/repo/version
       - persist_to_workspace:
-          root: workspace
+          root: ~/repo
           paths:
             - target
             - version
 
   publish-github-release:
-    requires:
-      - build
     docker:
       - image: cibuilds/github:0.10
     steps:
@@ -44,4 +42,6 @@ workflows:
   build_and_test:
     jobs:
       - build
-      - publish-github-release
+      - publish-github-release:
+          requires:
+            - build
