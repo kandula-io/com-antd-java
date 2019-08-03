@@ -17,9 +17,31 @@ jobs:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
       - run: mvn verify
+      - run: mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec >> ~/repo/version
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - target
+            - version
+
+  publish-github-release:
+    requires:
+      - build
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run: ls
+#      - run:
+#          name: "Publish Release on GitHub"
+#          command: |
+#            VERSION=$(my-binary --version)
+#            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ~/repo/target
 
 workflows:
   version: 2
   build_and_test:
     jobs:
       - build
+      - publish-github-release
