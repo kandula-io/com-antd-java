@@ -1,7 +1,7 @@
 version: 2.1
 
 jobs:
-  build:
+  unit-and-integration-test:
     docker:
       - image: circleci/openjdk:8-jdk-browsers
     working_directory: ~/repo
@@ -18,14 +18,30 @@ jobs:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-      - run: mvn verify -Dgpg.skip
-      - run: gpg --version
-      - run: mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec >> ~/repo/version
-      - persist_to_workspace:
-          root: workspace
+      - run: mvn integration-test
+
+  build-and-deploy:
+    docker:
+      - image: circleci/openjdk:8-jdk-browsers
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            - v1-dependencies-
+      - run: mvn dependency:go-offline
+      - save_cache:
           paths:
-            - target
-            - version
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+
+      - run:
+          name: Configure GPG private key for signing project artifacts in OSS Sonatype
+          command: |
+            echo $SECRING_GPG_ASC_BASE64 | base64 --decode | gpg --batch --no-tty --import --yes
+
+      - run: mvn -s .circleci/maven-release-settings.xml clean deploy -DskipTests -DskipITs
 
 #  publish-github-release:
 #    docker:
@@ -40,6 +56,11 @@ jobs:
 #            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ~/repo/target
 
 workflows:
-  build_and_test:
+  build-test-release:
     jobs:
-      - build
+      - unit-and-integration-test
+      - build-and-deploy:
+          requires:
+            - unit-and-integration-test
+
+
