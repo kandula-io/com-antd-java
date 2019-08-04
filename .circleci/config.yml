@@ -41,12 +41,7 @@ jobs:
           command: |
             echo $SECRING_GPG_ASC_BASE64 | base64 --decode | gpg --batch --no-tty --import --yes
 
-      - run:
-          name: Configure GPG owner trust for signing project artifacts in OSS Sonatype
-          command: |
-            echo $GPG_OWNERTRUST | base64 --decode | gpg --import-ownertrust
-
-      - run: mvn -s .circleci/maven-release-settings.xml clean deploy -DskipTests -DskipITs
+      - run: export GPG_TTY=$(tty) && mvn -s .circleci/maven-release-settings.xml clean deploy -DskipTests -DskipITs
 
 #  publish-github-release:
 #    docker:
