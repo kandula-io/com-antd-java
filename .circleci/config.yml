@@ -1,14 +1,20 @@
 version: 2.1
 
-jobs:
-  unit-and-integration-test:
+executors:
+  test-executor:
     docker:
       - image: circleci/openjdk:8-jdk-browsers
-    working_directory: ~/repo
-    environment:
-      MAVEN_OPTS: -Xmx3200m
+  maven-executor:
+    docker:
+      - image: circleci/openjdk:8-jdk
+
+commands:
+  unit-and-integration-test:
+    parameters:
+      browser:
+        type: string
+        default: "chrome"
     steps:
-      - checkout
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "pom.xml" }}
@@ -18,12 +24,54 @@ jobs:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-      - run: mvn integration-test
+      - run: mvn integration-test -Dselenide.browser= << parameters.browser >>
+
+jobs:
+
+  unit-and-integration-test-chrome:
+    executor: test-executor
+
+    working_directory: ~/repo
+    environment:
+      MAVEN_OPTS: -Xmx3200m
+
+    steps:
+      - checkout
+      - unit-and-integration-test
+          browser: "chrome"
+
+  unit-and-integration-test-firefox:
+    executor: test-executor
+
+    working_directory: ~/repo
+    environment:
+      MAVEN_OPTS: -Xmx3200m
+
+    steps:
+      - checkout
+      - unit-and-integration-test
+        browser: "firefox"
+
+  unit-and-integration-test-ie:
+    executor: test-executor
+
+    working_directory: ~/repo
+    environment:
+      MAVEN_OPTS: -Xmx3200m
+
+    steps:
+      - checkout
+      - unit-and-integration-test
+        browser: "ie"
+
 
   build-and-deploy:
-    docker:
-      - image: circleci/openjdk:8-jdk
+    executor: maven-executor
+
     working_directory: ~/repo
+    environment:
+      MAVEN_OPTS: -Xmx3200m
+
     steps:
       - checkout
       - restore_cache:
@@ -50,8 +98,8 @@ jobs:
             - version
 
   publish-github-release:
-    docker:
-      - image: cibuilds/github:0.10
+    executor: maven-executor
+
     steps:
       - attach_workspace:
           at: ~/repo
@@ -64,11 +112,15 @@ jobs:
 workflows:
   build-test-release:
     jobs:
-      - unit-and-integration-test
+      - unit-and-integration-test-chrome
+      - unit-and-integration-test-firefox
+      - unit-and-integration-test-ie
       - approve-release:
           type: approval
           requires:
-            - unit-and-integration-test
+            - unit-and-integration-test-chrome
+            - unit-and-integration-test-firefox
+            - unit-and-integration-test-ie
       - build-and-deploy:
           requires:
             - approve-release
