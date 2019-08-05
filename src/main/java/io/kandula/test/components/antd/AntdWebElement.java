@@ -3,7 +3,7 @@ package io.kandula.test.components.antd;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
-public class AntdWebElement {
+public abstract class AntdWebElement <T extends AntdWebElement> {
 
     protected WebDriver webDriver;
 
@@ -14,4 +14,5 @@ public class AntdWebElement {
         this.locator = locator;
     }
 
+    public abstract T waitForElement(int seconds);
 }

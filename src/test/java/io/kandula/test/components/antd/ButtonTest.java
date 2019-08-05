@@ -16,7 +16,7 @@ public class ButtonTest extends IntegrationTestBase {
 
         open("Button");
 
-        new Button(getWebDriver(), By.className("at__my_button")).click();
+        new Button(getWebDriver(), By.className("at__my_button")).waitForElement(60).click();
 
         assertThat($(By.id("result")).getText(), equalTo("Clicked"));
     }

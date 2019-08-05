@@ -47,6 +47,7 @@
     <properties>
 
         <selenium-api.version>3.141.59</selenium-api.version>
+        <selenium-support.version>3.141.59</selenium-support.version>
 
         <!-- Test Only -->
         <junit.version>4.12</junit.version>
@@ -61,6 +62,12 @@
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-api</artifactId>
             <version>${selenium-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-support</artifactId>
+            <version>${selenium-support.version}</version>
         </dependency>
 
         <!-- Test Only Dependencies -->
