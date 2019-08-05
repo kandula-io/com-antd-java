@@ -24,7 +24,17 @@ commands:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-      - run: mvn verify -Dmaven.javadoc.skip=true -Dgpg.skip -Dselenide.browser=<< parameters.browser >>
+      - run: mvn test -Dmaven.javadoc.skip=true -Dgpg.skip -Dselenide.browser=<< parameters.browser >>
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/repo/test-results/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/repo/test-results/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/repo/test-results
+      - store_artifacts:
+          path: ~/repo/test-results/junit
 
 jobs:
 
@@ -42,7 +52,6 @@ jobs:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-      - run: mvn test -DskipITs -Dmaven.javadoc.skip=true -Dgpg.skip
       - persist_to_workspace:
           root: ~/
           paths:
