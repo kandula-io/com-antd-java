@@ -31,6 +31,7 @@ commands:
           command: |
             find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/repo/test-results/junit/ \;
           when: always
+      - run: ls ~/repo/test-results
       - store_test_results:
           path: ~/repo/test-results
       - store_artifacts:
