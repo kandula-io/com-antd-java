@@ -141,20 +141,20 @@ workflows:
           type: approval
           filters:
             branches:
-                - master
+              only: master
           requires:
             - chrome-test
             - firefox-test
       - build-and-deploy:
           filters:
             branches:
-              - master
+              only: master
           requires:
             - approve-release
       - publish-github-release:
           filters:
             branches:
-              - master
+              only: master
           requires:
             - build-and-deploy
 
