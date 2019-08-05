@@ -65,6 +65,10 @@ workflows:
   build-test-release:
     jobs:
       - unit-and-integration-test
+      - approve-release:
+          type: approval
+          requires:
+            - unit-and-integration-test
       - build-and-deploy:
           requires:
             - unit-and-integration-test
