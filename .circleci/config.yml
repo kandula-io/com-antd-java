@@ -24,24 +24,21 @@ commands:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-      - run: mkdir -p ~/repo/test-results/junit/
+      - run: mkdir -p ~/repo/build
       - run: mvn test -Dmaven.javadoc.skip=true -Dgpg.skip -Dselenide.browser=<< parameters.browser >>
       - run:
           name: Save test results
           command: |
+            mkdir -p ~/repo/test-results/junit/
             find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/repo/test-results/junit/ \;
-            cp -r ~/repo/build ~/repo/test-results;
           when: always
-      - run:
-          name: check files
-          command: |
-            ls ~/repo
-          when: always
-
       - store_test_results:
           path: ~/repo/test-results
       - store_artifacts:
           path: ~/repo/test-results/junit
+      - store_artifacts:
+          path: ~/repo/build
+
 
 jobs:
 
