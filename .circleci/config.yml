@@ -30,18 +30,17 @@ jobs:
           keys:
             - v1-dependencies-{{ checksum "pom.xml" }}
             - v1-dependencies-
-      - run: mvn dependency:go-offline
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: v1-dependencies-{{ checksum "pom.xml" }}
-
       - run:
           name: Configure GPG private key for signing project artifacts in OSS Sonatype
           command: |
             echo $SECRING_GPG_ASC_BASE64 | base64 --decode | gpg --batch --no-tty --import --yes
 
-      - run: export GPG_TTY=$(tty) && mvn -s .circleci/maven-release-settings.xml clean deploy -DskipTests -DskipITs
+      - run: mvn -s .circleci/maven-release-settings.xml clean deploy -DskipTests -DskipITs -DdeployAtEnd=true -DperformRelease=true
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
 
 #  publish-github-release:
 #    docker:
