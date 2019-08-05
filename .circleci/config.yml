@@ -30,7 +30,7 @@ commands:
           name: Save test results
           command: |
             find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/repo/test-results/junit/ \;
-            cp ~/repo/build ~/repo/test-results;
+            cp -r ~/repo/build ~/repo/test-results;
           when: always
       - run:
           name: check files
