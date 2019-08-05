@@ -90,10 +90,6 @@ jobs:
     environment:
       MAVEN_OPTS: -Xmx3200m
 
-    filters:
-      branches:
-        pull_request: false
-
     steps:
       - checkout
       - restore_cache:
@@ -122,10 +118,6 @@ jobs:
   publish-github-release:
     executor: maven-executor
 
-    filters:
-      branches:
-        pull_request: false
-
     steps:
       - attach_workspace:
           at: ~/repo
@@ -147,13 +139,22 @@ workflows:
             - unit-test
       - approve-release:
           type: approval
+          filters:
+            branches:
+                - master
           requires:
             - chrome-test
             - firefox-test
       - build-and-deploy:
+          filters:
+            branches:
+              - master
           requires:
             - approve-release
       - publish-github-release:
+          filters:
+            branches:
+              - master
           requires:
             - build-and-deploy
 
