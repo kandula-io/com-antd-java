@@ -45,8 +45,6 @@ jobs:
 
       - run: gpg --list-keys
 
-      - run: export GPG_TTY=$(tty)
-
       - run: mvn -s .circleci/maven-release-settings.xml clean deploy -DskipTests -DskipITs
 
 #  publish-github-release:
