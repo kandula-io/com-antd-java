@@ -71,7 +71,7 @@ workflows:
             - unit-and-integration-test
       - build-and-deploy:
           requires:
-            - unit-and-integration-test
+            - approve-release
       - publish-github-release:
           requires:
             - build-and-deploy
