@@ -37,7 +37,7 @@ jobs:
 
     steps:
       - checkout
-      - unit-and-integration-test
+      - unit-and-integration-test:
           browser: "chrome"
 
   unit-and-integration-test-firefox:
@@ -49,8 +49,8 @@ jobs:
 
     steps:
       - checkout
-      - unit-and-integration-test
-        browser: "firefox"
+      - unit-and-integration-test:
+          browser: "firefox"
 
   unit-and-integration-test-ie:
     executor: test-executor
@@ -61,8 +61,8 @@ jobs:
 
     steps:
       - checkout
-      - unit-and-integration-test
-        browser: "ie"
+      - unit-and-integration-test:
+          browser: "ie"
 
 
   build-and-deploy:
