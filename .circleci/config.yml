@@ -24,7 +24,7 @@ commands:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-      - run: mvn integration-test -Dselenide.browser= << parameters.browser >>
+      - run: mvn integration-test -Dselenide.browser=<< parameters.browser >>
 
 jobs:
 
