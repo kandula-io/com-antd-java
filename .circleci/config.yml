@@ -120,7 +120,8 @@ jobs:
             - version
 
   publish-github-release:
-    executor: maven-executor
+    docker:
+      - image: cibuilds/github:0.10
 
     steps:
       - attach_workspace:
