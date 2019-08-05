@@ -9,14 +9,14 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class ButtonIT extends IntegrationTestBase {
+public class ButtonTest extends IntegrationTestBase {
 
     @Test
     public void buttonCanBeClicked() {
 
         open("Button");
 
-        new Button(getWebDriver(), By.className("at__my_button")).click();
+        new Button(getWebDriver(), By.className("at__my_button")).waitForElement(60).click();
 
         assertThat($(By.id("result")).getText(), equalTo("Clicked"));
     }
