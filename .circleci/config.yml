@@ -36,28 +36,30 @@ jobs:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
 
-      - run:
-          name: Configure GPG private key for signing project artifacts in OSS Sonatype
-          command: |
-            echo $SECRING_GPG_ASC_BASE64 | base64 --decode | gpg --batch --no-tty --import --yes
-
+      - run: echo $SECRING_GPG_ASC_BASE64 | base64 --decode | gpg --batch --no-tty --import --yes
       - run: echo $GPG_OWNERTRUST | base64 --decode | gpg --import-ownertrust
-
-      - run: gpg --list-keys
 
       - run: mvn -s .circleci/maven-release-settings.xml clean deploy -DskipTests -DskipITs
 
-#  publish-github-release:
-#    docker:
-#      - image: cibuilds/github:0.10
-#    steps:
-#      - attach_workspace:
-#          at: ~/repo
-#      - run:
-#          name: "Publish Release on GitHub"
-#          command: |
-#            VERSION=$(my-binary --version)
-#            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ~/repo/target
+      - run: mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec >> ~/repo/version
+
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - target
+            - version
+
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            VERSION=$(cat ~/repo/version)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ~/repo/target/com-antd-java-${VERSION}.jar
 
 workflows:
   build-test-release:
@@ -66,5 +68,8 @@ workflows:
       - build-and-deploy:
           requires:
             - unit-and-integration-test
+      - publish-github-release:
+          requires:
+            - build-and-deploy
 
 

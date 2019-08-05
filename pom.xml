@@ -7,7 +7,7 @@
     <groupId>io.kandula</groupId>
     <artifactId>com-antd-java</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.1</version>
     <name>com-antd-java</name>
     <description>An API to control Ant Design's components in selenium web driver tests.</description>
     <url>https://github.com/kandula-io/com-antd-java</url>
