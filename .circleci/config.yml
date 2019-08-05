@@ -145,20 +145,20 @@ workflows:
           type: approval
           filters:
             branches:
-              only: master
+              only: antd_v3.20.x
           requires:
             - chrome-test
             - firefox-test
       - build-and-deploy:
           filters:
             branches:
-              only: master
+              only: antd_v3.20.x
           requires:
             - approve-release
       - publish-github-release:
           filters:
             branches:
-              only: master
+              only: antd_v3.20.x
           requires:
             - build-and-deploy
 
