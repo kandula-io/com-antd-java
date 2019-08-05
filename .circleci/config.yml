@@ -90,6 +90,10 @@ jobs:
     environment:
       MAVEN_OPTS: -Xmx3200m
 
+    filters:
+      branches:
+        pull_request: false
+
     steps:
       - checkout
       - restore_cache:
@@ -117,6 +121,10 @@ jobs:
 
   publish-github-release:
     executor: maven-executor
+
+    filters:
+      branches:
+        pull_request: false
 
     steps:
       - attach_workspace:
