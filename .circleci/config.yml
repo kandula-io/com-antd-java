@@ -24,7 +24,7 @@ commands:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-      - run: mvn verify -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip -Dselenide.browser=<< parameters.browser >>
+      - run: mvn verify -Dmaven.javadoc.skip=true -Dgpg.skip -Dselenide.browser=<< parameters.browser >>
 
 jobs:
 
