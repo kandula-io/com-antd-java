@@ -57,7 +57,9 @@ jobs:
 
     steps:
       - attach_workspace:
-          at: ~/repo
+          at: ~/
+      - run: ls
+      - run: pwd
       - unit-and-integration-test:
           browser: "chrome"
 
