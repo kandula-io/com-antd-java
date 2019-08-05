@@ -24,11 +24,31 @@ commands:
           paths:
             - ~/.m2
           key: v1-dependencies-{{ checksum "pom.xml" }}
-      - run: mvn integration-test -Dselenide.browser=<< parameters.browser >>
+      - run: mvn verify -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip -Dselenide.browser=<< parameters.browser >>
 
 jobs:
 
-  unit-and-integration-test-chrome:
+  unit-test:
+    executor : maven-executor
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            - v1-dependencies-
+      - run: mvn dependency:go-offline
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+      - run: mvn test -DskipITs -Dmaven.javadoc.skip=true -Dgpg.skip
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - repo
+
+  chrome-test:
     executor: test-executor
 
     working_directory: ~/repo
@@ -36,11 +56,12 @@ jobs:
       MAVEN_OPTS: -Xmx3200m
 
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/repo
       - unit-and-integration-test:
           browser: "chrome"
 
-  unit-and-integration-test-firefox:
+  firefox-test:
     executor: test-executor
 
     working_directory: ~/repo
@@ -48,22 +69,10 @@ jobs:
       MAVEN_OPTS: -Xmx3200m
 
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/repo
       - unit-and-integration-test:
           browser: "firefox"
-
-  unit-and-integration-test-ie:
-    executor: test-executor
-
-    working_directory: ~/repo
-    environment:
-      MAVEN_OPTS: -Xmx3200m
-
-    steps:
-      - checkout
-      - unit-and-integration-test:
-          browser: "ie"
-
 
   build-and-deploy:
     executor: maven-executor
@@ -112,15 +121,18 @@ jobs:
 workflows:
   build-test-release:
     jobs:
-      - unit-and-integration-test-chrome
-      - unit-and-integration-test-firefox
-      - unit-and-integration-test-ie
+      - unit-test
+      - chrome-test:
+          requires:
+            - unit-test
+      - firefox-test:
+          requires:
+            - unit-test
       - approve-release:
           type: approval
           requires:
-            - unit-and-integration-test-chrome
-            - unit-and-integration-test-firefox
-            - unit-and-integration-test-ie
+            - chrome-test
+            - firefox-test
       - build-and-deploy:
           requires:
             - approve-release
