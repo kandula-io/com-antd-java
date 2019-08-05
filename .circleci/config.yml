@@ -41,6 +41,8 @@ jobs:
           command: |
             echo $SECRING_GPG_ASC_BASE64 | base64 --decode | gpg --batch --no-tty --import --yes
 
+      - run: echo $GPG_OWNERTRUST | base64 --decode | gpg --import-ownertrust
+
       - run: gpg --list-keys
 
       - run: export GPG_TTY=$(tty)
