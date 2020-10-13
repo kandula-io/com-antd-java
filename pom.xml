@@ -50,7 +50,7 @@
         <selenium-support.version>3.141.59</selenium-support.version>
 
         <!-- Test Only -->
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <nanohttpd-webserver.version>2.3.1</nanohttpd-webserver.version>
         <selenide.version>5.2.7</selenide.version>
 
